@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Pad Diary">
+  <title>Pad Diary - Drum Practice Log</title>
+  
+  <style>
+    :root {
+      --bg: #F4F6F9;
+      --card-bg: #FFFFFF;
+      --primary: #111D4A;
+      --primary-hover: #0c1433;
+      --accent: #2563EB;
+      --text-main: #1E293B;
+      --text-sub: #64748B;
+      --border: #E2E8F0;
+      --danger: #EF4444;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 440px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 4px;
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+    .header .date-display {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+
+    /* Cards */
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    /* Dropdown */
+    .custom-select {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      background-color: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748B' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      margin-bottom: 10px;
+    }
+
+    /* Segmented Target */
+    .segmented-control {
+      display: flex;
+      background: #F1F5F9;
+      padding: 3px;
+      border-radius: 10px;
+      gap: 4px;
+    }
+    .segment-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 7px 0;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sub);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .segment-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Practice Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .stat-box {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+    .stat-value-container {
+      margin: 8px 0;
+    }
+    .bpm-display {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+    }
+    .time-input {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--primary);
+      border: none;
+      background: transparent;
+      text-align: center;
+      width: 70px;
+      outline: none;
+    }
+
+    /* Tactile +/- buttons */
+    .btn-group {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+    .tactile-btn {
+      flex: 1;
+      height: 34px;
+      border: 1px solid var(--border);
+      background: #FFFFFF;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .tactile-btn:active {
+      background: #E2E8F0;
+      transform: translateY(1px);
+    }
+
+    /* Feedback Chips */
+    .feedback-group {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .feedback-chip {
+      flex: 1;
+      padding: 8px 0;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: #FFFFFF;
+      border-radius: 8px;
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .feedback-chip.active {
+      background: var(--primary);
+      color: #FFFFFF;
+      border-color: var(--primary);
+    }
+
+    /* Save Button */
+    .btn-save {
+      width: 100%;
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      padding: 15px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(17, 29, 74, 0.25);
+      transition: all 0.2s ease;
+    }
+    .btn-save:active {
+      transform: scale(0.98);
+      background: var(--primary-hover);
+    }
+
+    /* History List */
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .history-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-left .h-rudiment {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 3px;
+    }
+    .card-left .h-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+    .card-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .h-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #E2E8F0;
+      color: var(--text-main);
+    }
+    .badge-Max { background: #FDE68A; color: #92400E; }
+    .badge-Good { background: #DCFCE7; color: #166534; }
+    .badge-Okay { background: #E0E7FF; color: #3730A3; }
+    .badge-Bad { background: #FEE2E2; color: #991B1B; }
+
+    .btn-delete {
+      border: none;
+      background: transparent;
+      color: #94A3B8;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 20px;
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Top Header -->
+    <header class="header">
+      <h1>Pad Diary</h1>
+      <div class="date-display" id="currentDate">--</div>
+    </header>
+
+    <!-- Today's Focus -->
+    <section class="section-card">
+      <div class="section-title">Today's Focus</div>
+      <select id="rudimentSelect" class="custom-select">
+        <option value="Single Stroke Roll">1. Single Stroke Roll</option>
+        <option value="Double Stroke Roll">2. Double Stroke Roll</option>
+        <option value="Single Paradiddle">3. Single Paradiddle</option>
+        <option value="Double Paradiddle">4. Double Paradiddle</option>
+        <option value="Flam Accent">5. Flam Accent</option>
+        <option value="Flam Tap">6. Flam Tap</option>
+        <option value="Drag (Ruff)">7. Drag (Ruff)</option>
+        <option value="5 Stroke Roll">8. Five Stroke Roll</option>
+      </select>
+
+      <div class="segmented-control" id="targetSegments">
+        <button type="button" class="segment-btn active" data-target="Pad">Pad</button>
+        <button type="button" class="segment-btn" data-target="Snare">Snare</button>
+        <button type="button" class="segment-btn" data-target="Set">Set</button>
+      </div>
+    </section>
+
+    <!-- Practice Stats -->
+    <section class="section-card">
+      <div class="section-title">Practice Stats</div>
+      
+      <div class="stats-grid">
+        <!-- BPM -->
+        <div class="stat-box">
+          <div class="stat-label">Tempo (BPM)</div>
+          <div class="stat-value-container">
+            <span class="bpm-display" id="bpmValue">120</span>
+          </div>
+          <div class="btn-group">
+            <button type="button" class="tactile-btn" onclick="adjustBpm(-5)">-5</button>
+            <button type="button" class="tactile-btn" onclick="adjustBpm(-1)">-</button>
+            <button type="button" class="tactile-btn" onclick="adjustBpm(1)">+</button>
+            <button type="button" class="tactile-btn" onclick="adjustBpm(5)">+5</button>
+          </div>
+        </div>
+
+        <!-- Practice Time -->
+        <div class="stat-box">
+          <div class="stat-label">Time (min)</div>
+          <div class="stat-value-container">
+            <input type="number" id="timeInput" class="time-input" value="15" min="1" max="180">
+          </div>
+          <div class="btn-group">
+            <button type="button" class="tactile-btn" onclick="adjustTime(-5)">-5</button>
+            <button type="button" class="tactile-btn" onclick="adjustTime(5)">+5</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="stat-label" style="text-align: left; margin-bottom: 6px;">Feedback</div>
+      <div class="feedback-group" id="feedbackChips">
+        <div class="feedback-chip" data-fb="Bad">Bad</div>
+        <div class="feedback-chip" data-fb="Okay">Okay</div>
+        <div class="feedback-chip active" data-fb="Good">Good</div>
+        <div class="feedback-chip" data-fb="Max!">Max!</div>
+      </div>
+    </section>
+
+    <!-- Save Button -->
+    <button type="button" class="btn-save" onclick="saveLog()">SAVE PRACTICE LOG</button>
+
+    <!-- History -->
+    <section class="section-card">
+      <div class="section-title">Recent Sessions</div>
+      <div id="historyList" class="history-list">
+        <div class="empty-state">아직 저장된 기록이 없습니다.</div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // State
+    let currentBpm = 120;
+    let selectedTarget = "Pad";
+    let selectedFeedback = "Good";
+
+    // Set today's date
+    const today = new Date();
+    const dateOptions = { month: 'short', day: 'numeric', weekday: 'short' };
+    document.getElementById('currentDate').innerText = today.toLocaleDateString('en-US', dateOptions);
+
+    // Segmented Target selection
+    document.querySelectorAll('#targetSegments .segment-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#targetSegments .segment-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedTarget = btn.dataset.target;
+      });
+    });
+
+    // Feedback Chip selection
+    document.querySelectorAll('#feedbackChips .feedback-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#feedbackChips .feedback-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        selectedFeedback = chip.dataset.fb;
+      });
+    });
+
+    // BPM Controller
+    function adjustBpm(amount) {
+      currentBpm = Math.max(30, Math.min(300, currentBpm + amount));
+      document.getElementById('bpmValue').innerText = currentBpm;
+    }
+
+    // Time Controller
+    function adjustTime(amount) {
+      const input = document.getElementById('timeInput');
+      let val = parseInt(input.value) || 0;
+      val = Math.max(1, Math.min(300, val + amount));
+      input.value = val;
+    }
+
+    // LocalStorage CRUD
+    function getLogs() {
+      return JSON.parse(localStorage.getItem('pad_diary_logs') || '[]');
+    }
+
+    function saveLog() {
+      const rudiment = document.getElementById('rudimentSelect').value;
+      const time = document.getElementById('timeInput').value;
+
+      const log = {
+        id: Date.now(),
+        date: new Date().toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }),
+        rudiment: rudiment,
+        target: selectedTarget,
+        bpm: currentBpm,
+        time: time,
+        feedback: selectedFeedback
+      };
+
+      const logs = getLogs();
+      logs.unshift(log);
+      localStorage.setItem('pad_diary_logs', JSON.stringify(logs));
+      renderLogs();
+    }
+
+    function deleteLog(id) {
+      if (confirm("이 기록을 삭제하시겠습니까?")) {
+        let logs = getLogs();
+        logs = logs.filter(item => item.id !== id);
+        localStorage.setItem('pad_diary_logs', JSON.stringify(logs));
+        renderLogs();
+      }
+    }
+
+    function renderLogs() {
+      const container = document.getElementById('historyList');
+      const logs = getLogs();
+
+      if (logs.length === 0) {
+        container.innerHTML = '<div class="empty-state">아직 저장된 기록이 없습니다.</div>';
+        return;
+      }
+
+      container.innerHTML = logs.map(item => `
+        <div class="history-card">
+          <div class="card-left">
+            <div class="h-rudiment">${item.rudiment} <span style="font-size:11px; color:#94a3b8; font-weight:normal;">(${item.target})</span></div>
+            <div class="h-meta">${item.date} · <strong>${item.bpm} BPM</strong> · ${item.time}분</div>
+          </div>
+          <div class="card-right">
+            <span class="h-badge badge-${item.feedback.replace('!', '')}">${item.feedback}</span>
+            <button class="btn-delete" onclick="deleteLog(${item.id})">✕</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Initial render
+    renderLogs();
+  </script>
+</body>
+</html>
