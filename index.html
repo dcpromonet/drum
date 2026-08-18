@@ -15,6 +15,7 @@
       --primary: #111D4A;
       --primary-hover: #0c1433;
       --accent: #2563EB;
+      --accent-light: #EFF6FF;
       --text-main: #1E293B;
       --text-sub: #64748B;
       --border: #E2E8F0;
@@ -36,7 +37,7 @@
       display: flex;
       justify-content: center;
       min-height: 100vh;
-      padding-bottom: 40px;
+      padding-bottom: 50px;
     }
 
     .app-container {
@@ -45,7 +46,7 @@
       padding: 20px 16px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
     }
 
     /* Header */
@@ -76,13 +77,19 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     }
 
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
     .section-title {
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.8px;
       color: var(--text-sub);
       text-transform: uppercase;
-      margin-bottom: 12px;
     }
 
     /* Dropdown */
@@ -183,7 +190,7 @@
       border: 1px solid var(--border);
       background: #FFFFFF;
       border-radius: 8px;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: bold;
       color: var(--primary);
       display: flex;
@@ -242,7 +249,88 @@
       background: var(--primary-hover);
     }
 
+    /* Calendar */
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cal-btn {
+      background: #F1F5F9;
+      border: none;
+      border-radius: 6px;
+      width: 26px;
+      height: 26px;
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+    .cal-month-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+    }
+    .cal-day-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-sub);
+      padding-bottom: 6px;
+    }
+    .cal-cell {
+      height: 38px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      border-radius: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+    .cal-cell.empty {
+      cursor: default;
+    }
+    .cal-cell.has-practice {
+      background: var(--accent-light);
+      color: var(--accent);
+      font-weight: 800;
+    }
+    .cal-cell.has-practice::after {
+      content: '';
+      width: 4px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: absolute;
+      bottom: 4px;
+    }
+    .cal-cell.today {
+      border: 1.5px solid var(--primary);
+    }
+    .cal-cell.selected {
+      background: var(--primary) !important;
+      color: #FFFFFF !important;
+    }
+    .cal-cell.selected::after {
+      background: #FFFFFF;
+    }
+
     /* History List */
+    .filter-reset-badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      cursor: pointer;
+    }
     .history-list {
       display: flex;
       flex-direction: column;
@@ -271,7 +359,7 @@
     .card-right {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     .h-badge {
       font-size: 11px;
@@ -315,16 +403,13 @@
 
     <!-- Today's Focus -->
     <section class="section-card">
-      <div class="section-title">Today's Focus</div>
+      <div class="section-header">
+        <div class="section-title">Today's Focus</div>
+      </div>
       <select id="rudimentSelect" class="custom-select">
-        <option value="Single Stroke Roll">1. Single Stroke Roll</option>
-        <option value="Double Stroke Roll">2. Double Stroke Roll</option>
-        <option value="Single Paradiddle">3. Single Paradiddle</option>
-        <option value="Double Paradiddle">4. Double Paradiddle</option>
-        <option value="Flam Accent">5. Flam Accent</option>
-        <option value="Flam Tap">6. Flam Tap</option>
-        <option value="Drag (Ruff)">7. Drag (Ruff)</option>
-        <option value="5 Stroke Roll">8. Five Stroke Roll</option>
+        <option value="싱글 스트로크">1. 싱글 스트로크</option>
+        <option value="더블 스트로크 피지컬">2. 더블 스트로크 피지컬</option>
+        <option value="더블 스트로크 실전">3. 더블 스트로크 실전</option>
       </select>
 
       <div class="segmented-control" id="targetSegments">
@@ -336,7 +421,9 @@
 
     <!-- Practice Stats -->
     <section class="section-card">
-      <div class="section-title">Practice Stats</div>
+      <div class="section-header">
+        <div class="section-title">Practice Stats</div>
+      </div>
       
       <div class="stats-grid">
         <!-- BPM -->
@@ -379,12 +466,26 @@
     <!-- Save Button -->
     <button type="button" class="btn-save" onclick="saveLog()">SAVE PRACTICE LOG</button>
 
+    <!-- Monthly Calendar -->
+    <section class="section-card">
+      <div class="section-header">
+        <div class="section-title">Practice Calendar</div>
+        <div class="calendar-nav">
+          <button type="button" class="cal-btn" onclick="changeMonth(-1)">❮</button>
+          <span class="cal-month-label" id="calMonthYear"></span>
+          <button type="button" class="cal-btn" onclick="changeMonth(1)">❯</button>
+        </div>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </section>
+
     <!-- History -->
     <section class="section-card">
-      <div class="section-title">Recent Sessions</div>
-      <div id="historyList" class="history-list">
-        <div class="empty-state">아직 저장된 기록이 없습니다.</div>
+      <div class="section-header">
+        <div class="section-title" id="historySectionTitle">Recent Sessions</div>
+        <span class="filter-reset-badge" id="filterResetBtn" style="display:none;" onclick="resetFilter()">전체보기</span>
       </div>
+      <div id="historyList" class="history-list"></div>
     </section>
 
   </div>
@@ -394,11 +495,20 @@
     let currentBpm = 120;
     let selectedTarget = "Pad";
     let selectedFeedback = "Good";
+    let calDate = new Date();
+    let selectedFilterDate = null;
 
-    // Set today's date
+    // Helper: format YYYY-MM-DD
+    function toDateKey(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    // Set today's date in header
     const today = new Date();
-    const dateOptions = { month: 'short', day: 'numeric', weekday: 'short' };
-    document.getElementById('currentDate').innerText = today.toLocaleDateString('en-US', dateOptions);
+    document.getElementById('currentDate').innerText = today.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', weekday: 'short' });
 
     // Segmented Target selection
     document.querySelectorAll('#targetSegments .segment-btn').forEach(btn => {
@@ -440,10 +550,12 @@
     function saveLog() {
       const rudiment = document.getElementById('rudimentSelect').value;
       const time = document.getElementById('timeInput').value;
+      const now = new Date();
 
       const log = {
         id: Date.now(),
-        date: new Date().toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }),
+        dateKey: toDateKey(now),
+        dateDisplay: now.toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }),
         rudiment: rudiment,
         target: selectedTarget,
         bpm: currentBpm,
@@ -454,6 +566,7 @@
       const logs = getLogs();
       logs.unshift(log);
       localStorage.setItem('pad_diary_logs', JSON.stringify(logs));
+      renderCalendar();
       renderLogs();
     }
 
@@ -462,16 +575,86 @@
         let logs = getLogs();
         logs = logs.filter(item => item.id !== id);
         localStorage.setItem('pad_diary_logs', JSON.stringify(logs));
+        renderCalendar();
         renderLogs();
       }
     }
 
+    // Calendar Functions
+    function changeMonth(delta) {
+      calDate.setMonth(calDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const grid = document.getElementById('calendarGrid');
+      const monthLabel = document.getElementById('calMonthYear');
+      const year = calDate.getFullYear();
+      const month = calDate.getMonth();
+
+      monthLabel.innerText = `${year}년 ${month + 1}월`;
+
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const lastDay = new Date(year, month + 1, 0).getDate();
+      const todayKey = toDateKey(new Date());
+
+      const logs = getLogs();
+      const practiceDates = new Set(logs.map(l => l.dateKey || ''));
+
+      let html = ['일', '월', '화', '수', '목', '금', '토']
+        .map(d => `<div class="cal-day-name">${d}</div>`).join('');
+
+      for (let i = 0; i < firstDayIndex; i++) {
+        html += '<div class="cal-cell empty"></div>';
+      }
+
+      for (let d = 1; d <= lastDay; d++) {
+        const dKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const hasPractice = practiceDates.has(dKey);
+        const isToday = dKey === todayKey;
+        const isSelected = selectedFilterDate === dKey;
+
+        let classes = ['cal-cell'];
+        if (hasPractice) classes.push('has-practice');
+        if (isToday) classes.push('today');
+        if (isSelected) classes.push('selected');
+
+        html += `<div class="${classes.join(' ')}" onclick="filterByDate('${dKey}')">${d}</div>`;
+      }
+
+      grid.innerHTML = html;
+    }
+
+    function filterByDate(dateKey) {
+      if (selectedFilterDate === dateKey) {
+        resetFilter();
+      } else {
+        selectedFilterDate = dateKey;
+        document.getElementById('filterResetBtn').style.display = 'inline';
+        document.getElementById('historySectionTitle').innerText = `${dateKey} 기록`;
+        renderCalendar();
+        renderLogs();
+      }
+    }
+
+    function resetFilter() {
+      selectedFilterDate = null;
+      document.getElementById('filterResetBtn').style.display = 'none';
+      document.getElementById('historySectionTitle').innerText = 'Recent Sessions';
+      renderCalendar();
+      renderLogs();
+    }
+
     function renderLogs() {
       const container = document.getElementById('historyList');
-      const logs = getLogs();
+      let logs = getLogs();
+
+      if (selectedFilterDate) {
+        logs = logs.filter(item => (item.dateKey || '') === selectedFilterDate);
+      }
 
       if (logs.length === 0) {
-        container.innerHTML = '<div class="empty-state">아직 저장된 기록이 없습니다.</div>';
+        container.innerHTML = '<div class="empty-state">저장된 기록이 없습니다.</div>';
         return;
       }
 
@@ -479,7 +662,7 @@
         <div class="history-card">
           <div class="card-left">
             <div class="h-rudiment">${item.rudiment} <span style="font-size:11px; color:#94a3b8; font-weight:normal;">(${item.target})</span></div>
-            <div class="h-meta">${item.date} · <strong>${item.bpm} BPM</strong> · ${item.time}분</div>
+            <div class="h-meta">${item.dateDisplay || item.date} · <strong>${item.bpm} BPM</strong> · ${item.time}분</div>
           </div>
           <div class="card-right">
             <span class="h-badge badge-${item.feedback.replace('!', '')}">${item.feedback}</span>
@@ -490,6 +673,7 @@
     }
 
     // Initial render
+    renderCalendar();
     renderLogs();
   </script>
 </body>
